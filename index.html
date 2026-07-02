@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Gimnasio - CRUD con LocalStorage</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Gimnasio - Gestión de Clientes</h1>
+
+  <!-- Formulario para agregar nuevo cliente -->
+  <div class="formulario">
+    <h2>Agregar Cliente</h2>
+    <form id="formCliente">
+      <input type="text" id="nombre" placeholder="Nombre" required>
+      <input type="number" id="telefono" placeholder="Teléfono (8 dígitos)" required>
+      <input type="date" id="fechaNacimiento" required>
+      <select id="categoria" required>
+        <option value="">Categoría</option>
+        <option value="novato">Novato</option>
+        <option value="conocedor">Conocedor</option>
+        <option value="experimentador">Experimentador</option>
+      </select>
+      <select id="genero" required>
+        <option value="">Género</option>
+        <option value="hombre">Hombre</option>
+        <option value="mujer">Mujer</option>
+      </select>
+      <button type="submit">Agregar</button>
+    </form>
+  </div>
+
+  <!-- Campo de búsqueda -->
+  <div class="busqueda">
+    <label for="search">Buscar por nombre:</label>
+    <input type="text" id="search" placeholder="Escribe el nombre...">
+  </div>
+
+  <!-- Selector de categoría -->
+  <div class="filtro">
+    <label for="filtroCategoria">Filtrar por categoría:</label>
+    <select id="filtroCategoria">
+      <option value="">Todas</option>
+      <option value="novato">Novato</option>
+      <option value="conocedor">Conocedor</option>
+      <option value="experimentador">Experimentador</option>
+    </select>
+  </div>
+
+  <!-- Resultados -->
+  <div id="resultados"></div>
+
+  <script>
+    // Inicializar dataset desde localStorage o con datos de ejemplo
+    let dataset = JSON.parse(localStorage.getItem("clientes")) || [
+      { ID: 1, Nombre: "Carlos López", Telefono: 55512345, FechaNacimiento: "1995-03-12", Categoria: "novato", Genero: "hombre" },
+      { ID: 2, Nombre: "María González", Telefono: 55567890, FechaNacimiento: "1998-07-25", Categoria: "conocedor", Genero: "mujer" }
+    ];
+
+    const resultadosDiv = document.getElementById("resultados");
+    const searchInput = document.getElementById("search");
+    const filtroCategoria = document.getElementById("filtroCategoria");
+    const formCliente = document.getElementById("formCliente");
+
+    // Guardar dataset en localStorage
+    function guardarLocalStorage() {
+      localStorage.setItem("clientes", JSON.stringify(dataset));
+    }
+
+    // Mostrar resultados
+    function mostrarResultados() {
+      const texto = searchInput.value.toLowerCase();
+      const categoria = filtroCategoria.value;
+
+      const filtrados = dataset.filter(cliente => {
+        const coincideNombre = cliente.Nombre.toLowerCase().includes(texto);
+        const coincideCategoria = categoria === "" || cliente.Categoria === categoria;
+        return coincideNombre && coincideCategoria;
+      });
+
+      resultadosDiv.innerHTML = filtrados.length > 0
+        ? filtrados.map(c => `
+          <div class="card">
+            <h3 contenteditable="true" onblur="editarCampo(${c.ID}, 'Nombre', this.innerText)">${c.Nombre}</h3>
+            <p><strong>ID:</strong> ${c.ID}</p>
+            <p contenteditable="true" onblur="editarCampo(${c.ID}, 'Telefono', this.innerText)"><strong>Teléfono:</strong> ${c.Telefono}</p>
+            <p contenteditable="true" onblur="editarCampo(${c.ID}, 'FechaNacimiento', this.innerText)"><strong>Fecha de Nacimiento:</strong> ${c.FechaNacimiento}</p>
+            <p contenteditable="true" onblur="editarCampo(${c.ID}, 'Categoria', this.innerText)"><strong>Categoría:</strong> ${c.Categoria}</p>
+            <p contenteditable="true" onblur="editarCampo(${c.ID}, 'Genero', this.innerText)"><strong>Género:</strong> ${c.Genero}</p>
+            <button onclick="eliminarCliente(${c.ID})">Eliminar</button>
+          </div>
+        `).join("")
+        : "<p>No se encontraron resultados.</p>";
+    }
+
+    // Agregar cliente
+    formCliente.addEventListener("submit", e => {
+      e.preventDefault();
+      const nuevoCliente = {
+        ID: dataset.length ? Math.max(...dataset.map(c => c.ID)) + 1 : 1,
+        Nombre: document.getElementById("nombre").value,
+        Telefono: document.getElementById("telefono").value,
+        FechaNacimiento: document.getElementById("fechaNacimiento").value,
+        Categoria: document.getElementById("categoria").value,
+        Genero: document.getElementById("genero").value
+      };
+      dataset.push(nuevoCliente);
+      guardarLocalStorage();
+      mostrarResultados();
+      formCliente.reset();
+    });
+
+    // Eliminar cliente
+    function eliminarCliente(id) {
+      dataset = dataset.filter(c => c.ID !== id);
+      guardarLocalStorage();
+      mostrarResultados();
+    }
+
+    // Editar campo inline
+    function editarCampo(id, campo, valor) {
+      const cliente = dataset.find(c => c.ID === id);
+      if (cliente) {
+        cliente[campo] = valor;
+        guardarLocalStorage();
+      }
+    }
+
+    // Eventos
+    searchInput.addEventListener("input", mostrarResultados);
+    filtroCategoria.addEventListener("change", mostrarResultados);
+
+    // Mostrar al cargar
+    mostrarResultados();
+  </script>
+</body>
+</html>

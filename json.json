@@ -1,0 +1,42 @@
+[
+    {
+    "ID": 1,
+    "Nombre": "Carlos López",
+    "Telefono": 55512345,
+    "FechaNacimiento": "1995-03-12",
+    "Categoria": "novato",
+    "Genero": "hombre"
+    },
+    {
+    "ID": 2,
+    "Nombre": "María González",
+    "Telefono": 55567890,
+    "FechaNacimiento": "1998-07-25",
+    "Categoria": "conocedor",
+    "Genero": "mujer"
+    },
+    {
+    "ID": 3,
+    "Nombre": "José Ramírez",
+    "Telefono": 55524680,
+    "FechaNacimiento": "1987-11-05",
+    "Categoria": "experimentador",
+    "Genero": "hombre"
+    },
+    {
+    "ID": 4,
+    "Nombre": "Ana Castillo",
+    "Telefono": 55513579,
+    "FechaNacimiento": "2000-02-18",
+    "Categoria": "novato",
+    "Genero": "mujer"
+    },
+    {
+    "ID": 5,
+    "Nombre": "Luis Estrada",
+    "Telefono": 55598765,
+    "FechaNacimiento": "1993-09-30",
+    "Categoria": "conocedor",
+    "Genero": "hombre"
+    }
+]
